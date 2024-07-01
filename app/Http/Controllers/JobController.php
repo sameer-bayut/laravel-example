@@ -12,7 +12,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        //
+        return Job::with('employer')->paginate(2);
     }
 
     /**
@@ -20,7 +20,20 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        request()->validate([
+            'title' => ['required', 'min:3'],
+            'salary' => ['required'],
+        ]);
+    
+    
+        $job = Job::create([
+            'title' => request('title'),
+            'salary' => request('salary'),
+            'employer_id' => 1,
+        ]);
+    
+        
+        return $job;
     }
 
     /**
@@ -28,7 +41,13 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        //
+        $fetched_job = Job::find($job);
+
+        if(!$fetched_job){
+            return ['message' => 'Job Not Found'];
+        }
+
+        return $fetched_job;
     }
 
     /**
@@ -36,7 +55,15 @@ class JobController extends Controller
      */
     public function update(Request $request, Job $job)
     {
-        //
+        request()->validate([
+            'title' => ['required', 'min:3'],
+            'salary' => ['required'],
+        ]);
+
+        $job->title = request('title');
+        $job->salary = request('salary');
+
+        return $job;
     }
 
     /**
@@ -44,6 +71,8 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
-        //
+        $job->delete();
+
+        return ['message' => 'Deleted Job Successfully'];
     }
 }

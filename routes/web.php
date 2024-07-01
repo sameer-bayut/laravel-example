@@ -1,48 +1,13 @@
 <?php
 
-use App\Models\Job;
+use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/','home');
 
-Route::get('/about', function () {
-    return ['foo' => 'bar'];
-});
-
-Route::get('/contact', function () {
-    return view('home');
-});
-
-Route::get('/jobs', function () {
-    return Job::with('employer')->paginate(2);
-});
-
-Route::post('/jobs', function () {
-
-    request()->validate([
-        'title' => ['required', 'min:3'],
-        'salary' => ['required'],
-    ]);
-
-
-    $job = Job::create([
-        'title' => request('title'),
-        'salary' => request('salary'),
-        'employer_id' => 1,
-    ]);
-
-    
-    return $job;
-    
-});
-
-Route::get('/jobs/{id}', function ($id) {
-    
-});
-
-Route::get('/jobs/{id}', function ($id) {
-    return Job::find($id);
-});
+Route::get('/jobs', [JobController::class,'index']);
+Route::post('/jobs',[JobController::class, 'store']);
+Route::get('/jobs/{job}',[JobController::class, 'show']);
+Route::patch('/jobs/{job}',[JobController::class, 'update']);
+Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
 
